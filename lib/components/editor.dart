@@ -5,6 +5,7 @@ class Editor extends StatelessWidget {
   final String label;
   final String hint;
   final TextEditingController controller;
+  final TextInputType keyboardType;
 
   const Editor({
     super.key,
@@ -12,6 +13,7 @@ class Editor extends StatelessWidget {
     this.icon,
     required this.label,
     required this.hint,
+    this.keyboardType = TextInputType.number,
   });
 
   @override
@@ -28,7 +30,7 @@ class Editor extends StatelessWidget {
           labelText: label,
           hintText: hint,
         ),
-        keyboardType: TextInputType.number,
+        keyboardType: keyboardType,
       ),
     );
   }

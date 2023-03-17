@@ -1,10 +1,11 @@
-import 'package:bytebank/database/app_database.dart';
+import 'package:bytebank/database/contacts_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form/contact_form.dart';
 import 'package:flutter/material.dart';
 
 class ContactsList extends StatelessWidget {
-  const ContactsList({super.key});
+  final _contactsDao = ContactsDao();
+  ContactsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,13 +16,13 @@ class ContactsList extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ContactForm(),
+              builder: (context) => const ContactForm(),
             ));
           },
           child: const Icon(Icons.add)),
       body: FutureBuilder<List<Contact>>(
         initialData: const [],
-        future: findAll(),
+        future: _contactsDao.findAll(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.waiting:

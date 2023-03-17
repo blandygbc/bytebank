@@ -1,28 +1,30 @@
 import 'package:bytebank/components/editor.dart';
-import 'package:bytebank/database/app_database.dart';
+import 'package:bytebank/database/contacts_dao.dart';
 import 'package:flutter/material.dart';
 
 class ContactForm extends StatefulWidget {
-  late final TextEditingController _nameEC;
-  late final TextEditingController _accountEC;
-  ContactForm({super.key});
+  const ContactForm({super.key});
 
   @override
   State<ContactForm> createState() => _ContactFormState();
 }
 
 class _ContactFormState extends State<ContactForm> {
+  late final TextEditingController _nameEC;
+  late final TextEditingController _accountEC;
+  final _contactsDao = ContactsDao();
+
   @override
   void initState() {
-    widget._nameEC = TextEditingController();
-    widget._accountEC = TextEditingController();
+    _nameEC = TextEditingController();
+    _accountEC = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    widget._accountEC.dispose();
-    widget._nameEC.dispose();
+    _accountEC.dispose();
+    _nameEC.dispose();
     super.dispose();
   }
 
@@ -36,13 +38,13 @@ class _ContactFormState extends State<ContactForm> {
         child: Column(
           children: [
             Editor(
-              controller: widget._nameEC,
+              controller: _nameEC,
               label: 'Full name',
               hint: 'your name here...',
               keyboardType: TextInputType.text,
             ),
             Editor(
-              controller: widget._accountEC,
+              controller: _accountEC,
               label: 'Account number',
               hint: '0000',
             ),
@@ -52,17 +54,19 @@ class _ContactFormState extends State<ContactForm> {
                 width: double.maxFinite,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (widget._nameEC.text.compareTo('') == 0 ||
-                        widget._accountEC.text.compareTo('') == 0) {
+                    if (_nameEC.text.compareTo('') == 0 ||
+                        _accountEC.text.compareTo('') == 0) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(
                           content: Text('Preencha todos os campos'),
                         ),
                       );
                     } else {
-                      final name = widget._nameEC.text;
-                      final accNum = widget._accountEC.text;
-                      save(name: name, account: accNum).then((value) {
+                      final name = _nameEC.text;
+                      final accNum = _accountEC.text;
+                      _contactsDao
+                          .save(name: name, account: accNum)
+                          .then((value) {
                         Navigator.of(context).pop();
                       });
                     }

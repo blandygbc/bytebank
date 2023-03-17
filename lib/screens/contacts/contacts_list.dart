@@ -1,3 +1,5 @@
+import 'package:bytebank/database/app_database.dart';
+import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form/contact_form.dart';
 import 'package:flutter/material.dart';
 
@@ -12,28 +14,65 @@ class ContactsList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(
-                  builder: (context) => ContactForm(),
-                ))
-                .then((value) {});
+            Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ContactForm(),
+            ));
           },
           child: const Icon(Icons.add)),
-      body: ListView(
-        children: const [
-          Card(
-            child: ListTile(
-              title: Text(
-                'Alex',
-                style: TextStyle(fontSize: 20),
-              ),
-              subtitle: Text(
-                '1000',
-                style: TextStyle(fontSize: 14),
-              ),
-            ),
-          )
-        ],
+      body: FutureBuilder<List<Contact>>(
+        initialData: const [],
+        future: findAll(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.waiting:
+              return const Center(
+                child: CircularProgressIndicator(),
+              );
+
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                final contacts = snapshot.data as List<Contact>;
+                return ListView.builder(
+                  itemCount: contacts.length,
+                  itemBuilder: (context, index) {
+                    final contact = contacts[index];
+                    return _ContactItem(contact: contact);
+                  },
+                );
+              }
+              break;
+            default:
+              return const Center(
+                child: Text("Não há nenhum contato cadastrado."),
+              );
+          }
+          return const Center(
+            child: Text("Unknown error."),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ContactItem extends StatelessWidget {
+  final Contact contact;
+  const _ContactItem({
+    required this.contact,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ListTile(
+        title: Text(
+          contact.name,
+          style: const TextStyle(fontSize: 20),
+        ),
+        subtitle: Text(
+          contact.account.toString(),
+          style: const TextStyle(fontSize: 14),
+        ),
       ),
     );
   }

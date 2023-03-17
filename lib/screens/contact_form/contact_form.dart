@@ -1,5 +1,5 @@
 import 'package:bytebank/components/editor.dart';
-import 'package:bytebank/models/contact.dart';
+import 'package:bytebank/database/app_database.dart';
 import 'package:flutter/material.dart';
 
 class ContactForm extends StatefulWidget {
@@ -61,9 +61,10 @@ class _ContactFormState extends State<ContactForm> {
                       );
                     } else {
                       final name = widget._nameEC.text;
-                      final accNum = int.parse(widget._accountEC.text);
-                      final newContact = Contact(name: name, account: accNum);
-                      Navigator.of(context).pop(newContact);
+                      final accNum = widget._accountEC.text;
+                      save(name: name, account: accNum).then((value) {
+                        Navigator.of(context).pop();
+                      });
                     }
                   },
                   child: const Text('Create'),

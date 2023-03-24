@@ -1,11 +1,18 @@
 import 'package:bytebank/database/contacts_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form/contact_form.dart';
+import 'package:bytebank/screens/contacts/widgets/contact_item.dart';
 import 'package:flutter/material.dart';
 
-class ContactsList extends StatelessWidget {
+class ContactsList extends StatefulWidget {
+  const ContactsList({super.key});
+
+  @override
+  State<ContactsList> createState() => _ContactsListState();
+}
+
+class _ContactsListState extends State<ContactsList> {
   final _contactsDao = ContactsDao();
-  ContactsList({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -15,9 +22,13 @@ class ContactsList extends StatelessWidget {
       ),
       floatingActionButton: FloatingActionButton(
           onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(
+            Navigator.of(context)
+                .push(MaterialPageRoute(
               builder: (context) => const ContactForm(),
-            ));
+            ))
+                .then((value) {
+              setState(() {});
+            });
           },
           child: const Icon(Icons.add)),
       body: FutureBuilder<List<Contact>>(
@@ -37,7 +48,10 @@ class ContactsList extends StatelessWidget {
                   itemCount: contacts.length,
                   itemBuilder: (context, index) {
                     final contact = contacts[index];
-                    return _ContactItem(contact: contact);
+                    return ContactItem(
+                      name: contact.name,
+                      account: contact.account.toString(),
+                    );
                   },
                 );
               }
@@ -51,29 +65,6 @@ class ContactsList extends StatelessWidget {
             child: Text("Unknown error."),
           );
         },
-      ),
-    );
-  }
-}
-
-class _ContactItem extends StatelessWidget {
-  final Contact contact;
-  const _ContactItem({
-    required this.contact,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Card(
-      child: ListTile(
-        title: Text(
-          contact.name,
-          style: const TextStyle(fontSize: 20),
-        ),
-        subtitle: Text(
-          contact.account.toString(),
-          style: const TextStyle(fontSize: 14),
-        ),
       ),
     );
   }

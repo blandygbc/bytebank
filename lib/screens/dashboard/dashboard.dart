@@ -1,5 +1,9 @@
-import 'package:bytebank/screens/contacts/contacts_list.dart';
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:bytebank/screens/dashboard/widgets/feature_item.dart';
+import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
 import 'package:flutter/material.dart';
+
+import 'package:bytebank/screens/contacts/contacts_list.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});
@@ -18,36 +22,34 @@ class Dashboard extends StatelessWidget {
             padding: const EdgeInsets.all(8.0),
             child: Image.asset('assets/images/bytebank_logo.png'),
           ),
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Material(
-              color: Colors.green.shade900,
-              child: InkWell(
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => ContactsList(),
-                  ));
-                },
-                child: Container(
-                    padding: const EdgeInsets.all(8),
-                    height: 100,
-                    width: 150,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
-                        Icon(
-                          Icons.people,
-                          color: Colors.white,
-                          size: 28,
-                        ),
-                        Text(
-                          'Contacts',
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    )),
-              ),
+          SizedBox(
+            height: 110,
+            child: ListView(
+              scrollDirection: Axis.horizontal,
+              children: [
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => const ContactsList(),
+                    ));
+                  },
+                  child: const FeatureItem(
+                    icon: Icons.people,
+                    name: 'Contacts',
+                  ),
+                ),
+                InkWell(
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => TransferFormScreen(),
+                    ));
+                  },
+                  child: const FeatureItem(
+                    icon: Icons.description,
+                    name: 'Transaction Feed',
+                  ),
+                ),
+              ],
             ),
           )
         ],

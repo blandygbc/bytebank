@@ -1,11 +1,13 @@
+import 'package:bytebank/models/contact.dart';
+
 class Transfer {
   final double value;
-  final int accountNumber;
+  final Contact contact;
   Transfer({
     required this.value,
-    required this.accountNumber,
+    required this.contact,
   });
 
   @override
-  String toString() => 'Transfer(value: $value, accountNumber: $accountNumber)';
+  String toString() => 'Transfer(value: $value, contact: $contact)';
 }

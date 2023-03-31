@@ -2,12 +2,12 @@
 import 'dart:convert';
 
 class Contact {
-  final int id;
+  final int? id;
   final String name;
   final int account;
 
   Contact({
-    required this.id,
+    this.id,
     required this.name,
     required this.account,
   });
@@ -24,7 +24,7 @@ class Contact {
     );
   }
 
-  Map<String, dynamic> toMap() {
+  Map<String, dynamic> toLocalMap() {
     return <String, dynamic>{
       'id': id,
       'name': name,
@@ -32,11 +32,21 @@ class Contact {
     };
   }
 
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'id': id,
+      'name': name,
+      'account': account,
+    };
+  }
+
   factory Contact.fromMap(Map<String, dynamic> map) {
     return Contact(
-      id: map['id'] as int,
+      id: map['id'] != null ? map['id'] as int : null,
       name: map['name'] as String,
-      account: map['account_number'] as int,
+      account: map['account'] != null
+          ? map['account'] as int
+          : map['account_number'] as int,
     );
   }
 

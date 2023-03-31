@@ -11,7 +11,8 @@ class TransferFeedItem extends StatelessWidget {
       child: ListTile(
         leading: const Icon(Icons.monetization_on),
         title: Text(_transfer.value.toString()),
-        subtitle: Text(_transfer.contact.toString()),
+        subtitle: Text(
+            'Nome: ${_transfer.contact.name.toUpperCase()}  Conta: ${_transfer.contact.account.toString()}'),
       ),
     );
   }

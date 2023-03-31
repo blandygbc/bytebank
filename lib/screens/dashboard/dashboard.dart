@@ -1,6 +1,7 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bytebank/screens/dashboard/widgets/feature_item.dart';
 import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
+import 'package:bytebank/screens/transfer_list/transfer_feed_screen.dart';
 import 'package:flutter/material.dart';
 
 import 'package:bytebank/screens/contacts/contacts_list.dart';
@@ -30,7 +31,7 @@ class Dashboard extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => const ContactsList(),
+                      builder: (context) => const ContactsListScreen(),
                     ));
                   },
                   child: const FeatureItem(
@@ -41,7 +42,7 @@ class Dashboard extends StatelessWidget {
                 InkWell(
                   onTap: () {
                     Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => TransferFormScreen(),
+                      builder: (context) => const TransferFeedScreen(),
                     ));
                   },
                   child: const FeatureItem(

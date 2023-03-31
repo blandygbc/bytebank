@@ -1,11 +1,11 @@
+import 'package:bytebank/http/webclient.dart';
 import 'package:bytebank/models/transfer.dart';
 import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
 import 'package:bytebank/screens/transfer_list/widgets/transfer_feed_item.dart';
 import 'package:flutter/material.dart';
 
 class TransferFeedScreen extends StatefulWidget {
-  final List<Transfer> _transfers = [];
-  TransferFeedScreen({
+  const TransferFeedScreen({
     super.key,
   });
 
@@ -24,29 +24,60 @@ class _TransferFeedScreenState extends State<TransferFeedScreen> {
         onPressed: () async {
           Navigator.of(context)
               .push(MaterialPageRoute(
-                builder: (context) => TransferFormScreen(),
+                builder: (context) => const TransferFormScreen(),
               ))
               .then((value) => _updateList(value));
         },
         tooltip: 'Adicionar uma transferência',
         child: const Icon(Icons.add),
       ),
-      body: ListView.builder(
-        itemCount: widget._transfers.length,
-        itemBuilder: (context, index) {
-          final transfer = widget._transfers[index];
-          return TransferFeedItem(transfer);
+      body: FutureBuilder<List<Transfer>>(
+        future: findAllTransfers(),
+        builder: (context, snapshot) {
+          switch (snapshot.connectionState) {
+            case ConnectionState.none:
+              return const Center(
+                child: Text('Não foi possível se conectar.'),
+              );
+            case ConnectionState.waiting:
+              return const Center(child: CircularProgressIndicator());
+            case ConnectionState.done:
+              if (snapshot.hasData) {
+                final transfers = snapshot.data as List<Transfer>;
+                if (transfers.isNotEmpty) {
+                  return ListView.builder(
+                    itemCount: transfers.length,
+                    itemBuilder: (context, index) {
+                      final transfer = transfers[index];
+                      return TransferFeedItem(transfer);
+                    },
+                  );
+                } else {
+                  return const Center(
+                    child: Text('Não há transferências ainda.'),
+                  );
+                }
+              }
+              return const Center(
+                child: Text('Não há transferências ainda.'),
+              );
+            default:
+              break;
+          }
+          return const Center(
+            child: Text('Unknown error.'),
+          );
         },
       ),
     );
   }
 
   void _updateList(value) {
-    if (value != null) {
-      final transfer = value as Transfer;
-      setState(() {
-        widget._transfers.add(transfer);
-      });
-    }
+    // if (value != null) {
+    //   final transfer = value as Transfer;
+    //   setState(() {
+    //     _transfers.add(transfer);
+    //   });
+    // }
   }
 }

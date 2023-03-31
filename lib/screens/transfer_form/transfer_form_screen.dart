@@ -86,7 +86,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       final name = _nameEC.text;
       final int accNum = int.parse(_accountNumEC.text);
       final double trfVal = double.parse(_valueEC.text);
-      final contact = Contact(id: 0, name: name, account: accNum);
+      final contact = Contact(name: name, account: accNum);
       final transferCreated = Transfer(contact: contact, value: trfVal);
       Navigator.of(context).pop<Transfer>(transferCreated);
     }

@@ -4,14 +4,14 @@ import 'package:bytebank/screens/contact_form/contact_form.dart';
 import 'package:bytebank/screens/contacts/widgets/contact_item.dart';
 import 'package:flutter/material.dart';
 
-class ContactsList extends StatefulWidget {
-  const ContactsList({super.key});
+class ContactsListScreen extends StatefulWidget {
+  const ContactsListScreen({super.key});
 
   @override
-  State<ContactsList> createState() => _ContactsListState();
+  State<ContactsListScreen> createState() => _ContactsListScreenState();
 }
 
-class _ContactsListState extends State<ContactsList> {
+class _ContactsListScreenState extends State<ContactsListScreen> {
   final _contactsDao = ContactsDao();
 
   @override

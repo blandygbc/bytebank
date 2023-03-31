@@ -2,6 +2,7 @@ import 'package:bytebank/database/contacts_dao.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/screens/contact_form/contact_form.dart';
 import 'package:bytebank/screens/contacts/widgets/contact_item.dart';
+import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
 import 'package:flutter/material.dart';
 
 class ContactsListScreen extends StatefulWidget {
@@ -48,9 +49,18 @@ class _ContactsListScreenState extends State<ContactsListScreen> {
                   itemCount: contacts.length,
                   itemBuilder: (context, index) {
                     final contact = contacts[index];
-                    return ContactItem(
-                      name: contact.name,
-                      account: contact.account.toString(),
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) {
+                            return TransferFormScreen(contact: contact);
+                          },
+                        ));
+                      },
+                      child: ContactItem(
+                        name: contact.name,
+                        account: contact.account.toString(),
+                      ),
                     );
                   },
                 );

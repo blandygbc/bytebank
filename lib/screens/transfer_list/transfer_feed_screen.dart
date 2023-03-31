@@ -22,11 +22,11 @@ class _TransferFeedScreenState extends State<TransferFeedScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          Navigator.of(context)
-              .push(MaterialPageRoute(
-                builder: (context) => const TransferFormScreen(),
-              ))
-              .then((value) => _updateList(value));
+          // Navigator.of(context)
+          //     .push(MaterialPageRoute(
+          //       builder: (context) => const TransferFormScreen(),
+          //     ))
+          //     .then((value) => _updateList(value));
         },
         tooltip: 'Adicionar uma transferência',
         child: const Icon(Icons.add),

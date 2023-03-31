@@ -1,37 +1,31 @@
 import 'package:bytebank/components/editor.dart';
+import 'package:bytebank/http/webclient.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transfer.dart';
 import 'package:flutter/material.dart';
 
 const String _titluloAppBar = 'Criando Transferência';
-const String _nameFieldLabel = 'Nome do Contato';
-const String _accNumFieldLabel = 'Numero da Conta';
 const String _valueFieldLabel = 'Valor';
 const String _formHint = '0000';
 
 class TransferFormScreen extends StatefulWidget {
-  const TransferFormScreen({super.key});
+  final Contact contact;
+  const TransferFormScreen({super.key, required this.contact});
 
   @override
   State<TransferFormScreen> createState() => _TransferFormScreenState();
 }
 
 class _TransferFormScreenState extends State<TransferFormScreen> {
-  late final TextEditingController _nameEC;
-  late final TextEditingController _accountNumEC;
   late final TextEditingController _valueEC;
   @override
   void initState() {
-    _nameEC = TextEditingController();
-    _accountNumEC = TextEditingController();
     _valueEC = TextEditingController();
     super.initState();
   }
 
   @override
   void dispose() {
-    _nameEC.dispose();
-    _accountNumEC.dispose();
     _valueEC.dispose();
     super.dispose();
   }
@@ -44,7 +38,25 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       ),
       body: SingleChildScrollView(
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 16, 0, 8),
+              child: Text(
+                widget.contact.name,
+                style: const TextStyle(fontSize: 18),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 8, 0, 0),
+              child: Text(
+                widget.contact.account.toString(),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
             Editor(
               controller: _valueEC,
               icon: Icon(
@@ -54,19 +66,15 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
               label: _valueFieldLabel,
               hint: _formHint,
             ),
-            Editor(
-              controller: _nameEC,
-              label: _nameFieldLabel,
-              hint: _formHint,
-            ),
-            Editor(
-              controller: _accountNumEC,
-              label: _accNumFieldLabel,
-              hint: _formHint,
-            ),
-            ElevatedButton(
-              onPressed: () => _createTransfer(context),
-              child: const Text('Transferir'),
+            Center(
+              child: SizedBox(
+                height: 42,
+                width: 250,
+                child: ElevatedButton(
+                  onPressed: () => _createTransfer(context),
+                  child: const Text('Transferir'),
+                ),
+              ),
             )
           ],
         ),
@@ -75,20 +83,19 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
   }
 
   void _createTransfer(BuildContext context) {
-    if (_accountNumEC.text.compareTo('') == 0 ||
-        _valueEC.text.compareTo('') == 0) {
+    if (_valueEC.text.compareTo('') == 0) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Preencha todos os campos'),
+          content: Text('O valor deve ser preenchido!'),
         ),
       );
     } else {
-      final name = _nameEC.text;
-      final int accNum = int.parse(_accountNumEC.text);
-      final double trfVal = double.parse(_valueEC.text);
-      final contact = Contact(name: name, account: accNum);
-      final transferCreated = Transfer(contact: contact, value: trfVal);
-      Navigator.of(context).pop<Transfer>(transferCreated);
+      final double tansferVal = double.parse(_valueEC.text);
+      final transferCreated =
+          Transfer(contact: widget.contact, value: tansferVal);
+      save(transferCreated).then((transfer) {
+        Navigator.of(context).pop();
+      });
     }
   }
 }

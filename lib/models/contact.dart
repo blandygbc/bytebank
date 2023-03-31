@@ -36,7 +36,7 @@ class Contact {
     return <String, dynamic>{
       'id': id,
       'name': name,
-      'account': account,
+      'accountNumber': account,
     };
   }
 
@@ -44,8 +44,8 @@ class Contact {
     return Contact(
       id: map['id'] != null ? map['id'] as int : null,
       name: map['name'] as String,
-      account: map['account'] != null
-          ? map['account'] as int
+      account: map['accountNumber'] != null
+          ? map['accountNumber'] as int
           : map['account_number'] as int,
     );
   }

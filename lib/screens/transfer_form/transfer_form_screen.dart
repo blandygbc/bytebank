@@ -1,5 +1,5 @@
 import 'package:bytebank/components/editor.dart';
-import 'package:bytebank/http/webclient.dart';
+import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transfer.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +18,7 @@ class TransferFormScreen extends StatefulWidget {
 
 class _TransferFormScreenState extends State<TransferFormScreen> {
   late final TextEditingController _valueEC;
+  final TransferWebclient _webclient = TransferWebclient();
   @override
   void initState() {
     _valueEC = TextEditingController();
@@ -93,7 +94,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       final double tansferVal = double.parse(_valueEC.text);
       final transferCreated =
           Transfer(contact: widget.contact, value: tansferVal);
-      save(transferCreated).then((transfer) {
+      _webclient.save(transferCreated).then((transfer) {
         Navigator.of(context).pop();
       });
     }

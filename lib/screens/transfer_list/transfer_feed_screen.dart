@@ -1,6 +1,5 @@
-import 'package:bytebank/http/webclient.dart';
+import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/transfer.dart';
-import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
 import 'package:bytebank/screens/transfer_list/widgets/transfer_feed_item.dart';
 import 'package:flutter/material.dart';
 
@@ -14,25 +13,15 @@ class TransferFeedScreen extends StatefulWidget {
 }
 
 class _TransferFeedScreenState extends State<TransferFeedScreen> {
+  final TransferWebclient _webclient = TransferWebclient();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Transferências'),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          // Navigator.of(context)
-          //     .push(MaterialPageRoute(
-          //       builder: (context) => const TransferFormScreen(),
-          //     ))
-          //     .then((value) => _updateList(value));
-        },
-        tooltip: 'Adicionar uma transferência',
-        child: const Icon(Icons.add),
-      ),
       body: FutureBuilder<List<Transfer>>(
-        future: findAllTransfers(),
+        future: _webclient.findAllTransfers(),
         builder: (context, snapshot) {
           switch (snapshot.connectionState) {
             case ConnectionState.none:
@@ -70,14 +59,5 @@ class _TransferFeedScreenState extends State<TransferFeedScreen> {
         },
       ),
     );
-  }
-
-  void _updateList(value) {
-    // if (value != null) {
-    //   final transfer = value as Transfer;
-    //   setState(() {
-    //     _transfers.add(transfer);
-    //   });
-    // }
   }
 }

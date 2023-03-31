@@ -1,10 +1,8 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'package:bytebank/screens/contacts/contacts_list.dart';
 import 'package:bytebank/screens/dashboard/widgets/feature_item.dart';
-import 'package:bytebank/screens/transfer_form/transfer_form_screen.dart';
 import 'package:bytebank/screens/transfer_list/transfer_feed_screen.dart';
 import 'package:flutter/material.dart';
-
-import 'package:bytebank/screens/contacts/contacts_list.dart';
 
 class Dashboard extends StatelessWidget {
   const Dashboard({super.key});

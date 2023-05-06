@@ -1,4 +1,5 @@
 import 'package:bytebank/components/editor.dart';
+import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/contact.dart';
@@ -108,9 +109,24 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
     }
   }
 
-  void _save(Transfer transferCreated, String password, BuildContext context) {
-    _webclient.save(transferCreated, password).then((transfer) {
-      Navigator.of(context).pop();
-    });
+  void _save(
+      Transfer transferCreated, String password, BuildContext context) async {
+    try {
+      await _webclient.save(transferCreated, password);
+      if (context.mounted) {
+        showDialog(
+          context: context,
+          builder: (context) {
+            return const SuccessDialog(message: "Sucessful transfer!");
+          },
+        ).then((value) => Navigator.of(context).pop());
+      }
+    } on Exception catch (e) {
+      showDialog(
+          context: context,
+          builder: (contextDialog) {
+            return FailureDialog(message: e.toString().substring(11));
+          });
+    }
   }
 }

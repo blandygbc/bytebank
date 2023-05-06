@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bytebank/http/webclient.dart';
 import 'package:bytebank/models/transfer.dart';
+import 'package:http/src/response.dart';
 
 const transactionsPath = '/transactions';
 
@@ -26,6 +27,17 @@ class TransferWebclient {
       headers: headers,
       body: transfer.toJson(),
     );
+    if (response.statusCode != 200) {
+      _throwHttpError(response.statusCode);
+    }
     return Transfer.fromJson(response.body);
   }
+
+  void _throwHttpError(int statusCode) =>
+      throw Exception(_statusCodesMessages[statusCode]);
+
+  final Map<int, String> _statusCodesMessages = {
+    400: "Invalid transfer",
+    401: "Authentication error",
+  };
 }

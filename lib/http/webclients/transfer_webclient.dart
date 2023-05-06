@@ -7,8 +7,10 @@ const transactionsPath = '/transactions';
 
 class TransferWebclient {
   Future<List<Transfer>> findAllTransfers() async {
-    final url = buildApiUri(transactionsPath);
-    final response = await client.get(url).timeout(const Duration(seconds: 5));
+    final url = Webclient.buildApiUri(transactionsPath);
+    final response = await Webclient.getClient()
+        .get(url)
+        .timeout(const Duration(seconds: 5));
     return _getTransfersList(json.decode(response.body));
   }
 
@@ -16,9 +18,14 @@ class TransferWebclient {
     return List<Transfer>.from(decodedJson.map((map) => Transfer.fromMap(map)));
   }
 
-  Future<Transfer> save(Transfer transfer) async {
-    final response = await client.post(buildApiUri(transactionsPath),
-        headers: basicHeader, body: transfer.toJson());
+  Future<Transfer> save(Transfer transfer, String password) async {
+    var headers = Webclient.getBasicHeaders();
+    headers.update('password', (value) => password);
+    final response = await Webclient.getClient().post(
+      Webclient.buildApiUri(transactionsPath),
+      headers: headers,
+      body: transfer.toJson(),
+    );
     return Transfer.fromJson(response.body);
   }
 }

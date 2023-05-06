@@ -1,4 +1,5 @@
 import 'package:bytebank/components/editor.dart';
+import 'package:bytebank/components/transaction_auth_dialog.dart';
 import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transfer.dart';
@@ -94,9 +95,22 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       final double tansferVal = double.parse(_valueEC.text);
       final transferCreated =
           Transfer(contact: widget.contact, value: tansferVal);
-      _webclient.save(transferCreated).then((transfer) {
-        Navigator.of(context).pop();
-      });
+      showDialog(
+        context: context,
+        builder: (contextDialog) {
+          return TransactionAuthDialog(
+            onConfirm: (password) {
+              _save(transferCreated, password, context);
+            },
+          );
+        },
+      );
     }
+  }
+
+  void _save(Transfer transferCreated, String password, BuildContext context) {
+    _webclient.save(transferCreated, password).then((transfer) {
+      Navigator.of(context).pop();
+    });
   }
 }

@@ -1,10 +1,15 @@
+import 'dart:async';
+
 import 'package:bytebank/components/editor.dart';
+import 'package:bytebank/components/progress.dart';
 import 'package:bytebank/components/response_dialog.dart';
 import 'package:bytebank/components/transaction_auth_dialog.dart';
+import 'package:bytebank/http/exceptions/http_exception.dart';
 import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/contact.dart';
 import 'package:bytebank/models/transfer.dart';
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 
 const String _titluloAppBar = 'Criando Transferência';
 const String _valueFieldLabel = 'Valor';
@@ -21,6 +26,8 @@ class TransferFormScreen extends StatefulWidget {
 class _TransferFormScreenState extends State<TransferFormScreen> {
   late final TextEditingController _valueEC;
   final TransferWebclient _webclient = TransferWebclient();
+  final String idGeneratedByForm = const Uuid().v4();
+  bool sending = false;
   @override
   void initState() {
     _valueEC = TextEditingController();
@@ -35,6 +42,7 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
 
   @override
   Widget build(BuildContext context) {
+    debugPrint('Generated transfer id $idGeneratedByForm');
     return Scaffold(
       appBar: AppBar(
         title: const Text(_titluloAppBar),
@@ -43,6 +51,13 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            Visibility(
+              visible: sending,
+              child: const Padding(
+                padding: EdgeInsets.all(8),
+                child: Progress(message: "Sending..."),
+              ),
+            ),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 16, 0, 8),
               child: Text(
@@ -94,23 +109,33 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
       );
     } else {
       final double tansferVal = double.parse(_valueEC.text);
-      final transferCreated =
-          Transfer(contact: widget.contact, value: tansferVal);
-      showDialog(
-        context: context,
-        builder: (contextDialog) {
-          return TransactionAuthDialog(
-            onConfirm: (password) {
-              _save(transferCreated, password, context);
-            },
-          );
-        },
+      final transferCreated = Transfer(
+        id: idGeneratedByForm,
+        contact: widget.contact,
+        value: tansferVal,
       );
+      authenticateTransfer(context, transferCreated);
     }
+  }
+
+  void authenticateTransfer(BuildContext context, Transfer transferCreated) {
+    showDialog(
+      context: context,
+      builder: (contextDialog) {
+        return TransactionAuthDialog(
+          onConfirm: (password) {
+            _save(transferCreated, password, context);
+          },
+        );
+      },
+    );
   }
 
   void _save(
       Transfer transferCreated, String password, BuildContext context) async {
+    setState(() {
+      sending = true;
+    });
     try {
       await _webclient.save(transferCreated, password);
       if (context.mounted) {
@@ -121,12 +146,24 @@ class _TransferFormScreenState extends State<TransferFormScreen> {
           },
         ).then((value) => Navigator.of(context).pop());
       }
-    } on Exception catch (e) {
-      showDialog(
-          context: context,
-          builder: (contextDialog) {
-            return FailureDialog(message: e.toString().substring(11));
-          });
+    } on TimeoutException catch (_) {
+      _showFailureMessage(context, "Timeout submiting transfer");
+    } on HttpException catch (e) {
+      _showFailureMessage(context, e.message);
+    } on Exception catch (_) {
+      _showFailureMessage(context, "Unknow error");
+    } finally {
+      setState(() {
+        sending = false;
+      });
     }
+  }
+
+  void _showFailureMessage(BuildContext context, String message) {
+    showDialog(
+        context: context,
+        builder: (contextDialog) {
+          return FailureDialog(message: message);
+        });
   }
 }

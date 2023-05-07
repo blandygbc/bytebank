@@ -15,7 +15,7 @@ class Webclient {
   static Client getClient() {
     return InterceptedClient.build(interceptors: [
       LoggingInterceptor(),
-    ]);
+    ], requestTimeout: const Duration(seconds: 5));
   }
 
   static Uri buildApiUri(String path) {

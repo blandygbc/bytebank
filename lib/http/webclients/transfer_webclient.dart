@@ -1,17 +1,17 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
+import 'package:bytebank/http/exceptions/http_exception.dart';
 import 'package:bytebank/http/webclient.dart';
 import 'package:bytebank/models/transfer.dart';
-import 'package:http/src/response.dart';
 
 const transactionsPath = '/transactions';
 
 class TransferWebclient {
+  final transactionsFullPath = Webclient.buildApiUri(transactionsPath);
+
   Future<List<Transfer>> findAllTransfers() async {
-    final url = Webclient.buildApiUri(transactionsPath);
-    final response = await Webclient.getClient()
-        .get(url)
-        .timeout(const Duration(seconds: 5));
+    final response = await Webclient.getClient().get(transactionsFullPath);
     return _getTransfersList(json.decode(response.body));
   }
 
@@ -22,22 +22,23 @@ class TransferWebclient {
   Future<Transfer> save(Transfer transfer, String password) async {
     var headers = Webclient.getBasicHeaders();
     headers.update('password', (value) => password);
+    await Future.delayed(const Duration(seconds: 2));
     final response = await Webclient.getClient().post(
-      Webclient.buildApiUri(transactionsPath),
+      transactionsFullPath,
       headers: headers,
       body: transfer.toJson(),
     );
+
     if (response.statusCode != 200) {
-      _throwHttpError(response.statusCode);
+      throw HttpException(
+          _statusCodesMessages[response.statusCode] ?? 'Unknow error');
     }
     return Transfer.fromJson(response.body);
   }
 
-  void _throwHttpError(int statusCode) =>
-      throw Exception(_statusCodesMessages[statusCode]);
-
   final Map<int, String> _statusCodesMessages = {
     400: "Invalid transfer",
     401: "Authentication error",
+    409: "Transfer already exists",
   };
 }

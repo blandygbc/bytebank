@@ -85,11 +85,7 @@ class ContactsListScreen extends StatelessWidget {
               final contact = contacts[index];
               return GestureDetector(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) {
-                      return TransferFormScreen(contact: contact);
-                    },
-                  ));
+                  push(context, TransferFormContainer(contact: contact));
                 },
                 child: ContactItem(
                   name: contact.name,

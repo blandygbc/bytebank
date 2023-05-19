@@ -1,7 +1,17 @@
+import 'package:bytebank/components/container.dart';
 import 'package:bytebank/http/webclients/transfer_webclient.dart';
 import 'package:bytebank/models/transfer.dart';
 import 'package:bytebank/screens/transfer_list/widgets/transfer_feed_item.dart';
 import 'package:flutter/material.dart';
+
+class TransferFeedContainer extends BlocContainer {
+  const TransferFeedContainer({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return const TransferFeedScreen();
+  }
+}
 
 class TransferFeedScreen extends StatefulWidget {
   const TransferFeedScreen({
